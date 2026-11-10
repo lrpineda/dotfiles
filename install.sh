@@ -19,7 +19,7 @@ CONFIG_FILES=(
   hypr/looknfeel.lua hypr/windows.lua
   ghostty/config ghostty/shaders
   alacritty/alacritty.toml kitty/kitty.conf
-  omarchy/branding
+  omarchy/branding omarchy/backgrounds
   omarchy/plugins/lrpineda.rebel-menu omarchy/plugins/lrpineda.media-card omarchy/plugins/lrpineda.power
 )
 
@@ -75,8 +75,9 @@ if ! grep -q 'blesh/ble.sh' "$HOME/.bashrc"; then
   printf '\n# Hand the line editor over to ble.sh. Must be the LAST line in this file.\n[[ ${BLE_VERSION-} ]] && ble-attach\n' >> "$HOME/.bashrc"
 fi
 
-step "Theme"
+step "Theme + wallpaper"
 omarchy theme set catppuccin
+omarchy theme bg set "$HOME/.config/omarchy/backgrounds/catppuccin/a_graphic_of_a_wave.png"
 
 step "Reloading"
 hyprctl reload >/dev/null && hyprctl configerrors

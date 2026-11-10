@@ -37,6 +37,7 @@ The script backs up every file it replaces as `<file>.bak.<timestamp>`.
 
 **Theme**
 - [x] Catppuccin (stock theme, applied with `omarchy theme set catppuccin`)
+- [x] Custom wallpapers in `omarchy/backgrounds/` (5 for catppuccin, 1 for gruvbox). The wave is set as the active one; cycle with `omarchy theme bg next`.
 
 ## Left out on purpose (specific to this laptop)
 
