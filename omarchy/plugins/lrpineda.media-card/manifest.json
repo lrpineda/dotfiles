@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "lrpineda.media-card",
+  "name": "Media Card",
+  "version": "1.0.0",
+  "author": "lrpineda",
+  "description": "Now playing with a hover player card: art, seek, transport, and source switching",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Media Card",
+    "description": "Hover for album art, seek bar, controls, and source switching",
+    "category": "Media",
+    "allowMultiple": false,
+    "defaultSection": "left"
+  }
+}

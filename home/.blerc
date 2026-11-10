@@ -1,0 +1,23 @@
+# ble.sh configuration. Sourced automatically when ble.sh loads from ~/.bashrc.
+# Targets ble.sh 0.4 (AUR blesh-git).
+
+# ble.sh ships the suggestion face as `bg=254,fg=238`: dark text on a light-grey
+# BACKGROUND, designed for light terminals. Against an Omarchy dark theme it
+# reads as a highlighted block. Drop the background for a dim foreground so it
+# looks like fish's ghost text.
+#
+# 242 is a fixed 256-cube grey, deliberately NOT palette 8. Themes only remap
+# palette 0-15 and pick colour 8 to sit close to the background (matte-black
+# uses #333333 on #121212 — about 1.5:1, effectively invisible). A fixed
+# mid-grey stays legible on dark themes and on the light ones alike.
+ble-color-setface auto_complete fg=242
+
+# Suggest after a longer pause than the 1ms default. Fast enough to feel
+# instant when you stop typing, slow enough that mid-word keystrokes don't
+# flicker a new suggestion on every character.
+bleopt complete_auto_delay=150
+
+# Note: suggesting from history needs no setting here. complete_auto_complete
+# defaults to 1, and the old complete_auto_history option is deprecated in 0.4
+# (it now just toggles `history-disabled` in complete_auto_complete_opts, which
+# is empty by default — i.e. history is already a source).

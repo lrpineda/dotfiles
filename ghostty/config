@@ -1,33 +1,83 @@
 # Dynamic theme colors
-config-file = ?"~/.config/omarchy/current/theme/ghostty.conf"
+config-file = ?"~/.local/state/omarchy/current/theme/ghostty.conf"
 
 # Font
-font-family = "JetBrainsMonoNL Nerd Font"
+font-family = "MesloLGS Nerd Font"
 font-style = Regular
-font-size = 9
+font-size = 11
 
 # Window
 window-theme = ghostty
-window-padding-x = 14
+window-padding-x = 10
 window-padding-y = 14
 confirm-close-surface=false
 resize-overlay = never
 gtk-toolbar-style = flat
 
+# Transparency
+#
+# `background-blur` is deliberately NOT set: ghostty only implements it on
+# macOS and KDE, and it is a no-op under Hyprland. The frosted-glass look is
+# produced by the compositor instead — see the blur block in
+# ~/.config/hypr/looknfeel.lua.
+background-opacity = 0.5
+background-opacity-cells = true
+
 # Cursor styling
-cursor-style = "block"
+cursor-style = "bar"
 cursor-style-blink = false
-shell-integration-features = no-cursor
+
+# Shell integration is off because it is incompatible with ble.sh.
+#
+# Ghostty's bash integration emits OSC 133;A with `redraw=last;cl=line` from
+# __ghostty_precmd on every prompt (ghostty.bash:237). ble.sh draws and redraws
+# the prompt itself and has no OSC 133 support, so ghostty's redraw request
+# lands on top of ble.sh's own render and the prompt appears twice. No
+# shell-integration-features flag covers prompt marking — only cursor, path,
+# sudo, title and ssh-env — so the whole integration has to go.
+#
+# The one feature in use here was ssh-env; it is reimplemented as an ssh
+# wrapper in ~/.bashrc. To revert, delete this line and restore
+# `shell-integration-features = no-cursor,ssh-env`.
+shell-integration = none
 
 # Keyboard bindings
 keybind = shift+insert=paste_from_clipboard
 keybind = control+insert=copy_to_clipboard
+# Send Shift+Enter as CSI-u so TUIs can distinguish it from Enter.
+keybind = shift+enter=csi:13;2u
+# Legacy encoding sends Alt+Shift+Enter the same as Alt+Enter; send CSI-u so tmux can match M-S-Enter.
+keybind = alt+shift+enter=csi:13;4u
+keybind = super+control+shift+alt+arrow_down=resize_split:down,100
+keybind = super+control+shift+alt+arrow_up=resize_split:up,100
+keybind = super+control+shift+alt+arrow_left=resize_split:left,100
+keybind = super+control+shift+alt+arrow_right=resize_split:right,100
 
-# SSH session terminfo
-shell-integration-features = ssh-env
+# Quick terminal
+#
+# Ghostty's own quick terminal is NOT used here. Toggling it from outside
+# ghostty needs a `global:` keybind, which goes through the XDG GlobalShortcuts
+# portal, and xdg-desktop-portal-hyprland rejects unsandboxed apps:
+#
+#   org.freedesktop.portal.Error.NotAllowed: An app id is required
+#
+# Ghostty exposes no D-Bus action for it either, so Hyprland owns the toggle.
+# CTRL + grave runs ~/.local/bin/quick-terminal, which drops a dedicated
+# ghostty onto the `quickterm` special workspace. Bound in
+# ~/.config/hypr/bindings.lua.
 
-#shaders
-#custom-shader = ~/.config/ghostty/shaders/bettercrt.glsl
-#custom-shader = ~/.config/ghostty/shaders/cursor/party_sparks.glsl
+# Custom shaders
+#
+# Applied in order; the CRT pass runs last so it warps everything above it.
+# bettercrt-transparent preserves the source alpha, so background-opacity
+# still shows through — the plain bettercrt.glsl in this directory does not.
 custom-shader = ~/.config/ghostty/shaders/cursor/cursor_smear.glsl
 custom-shader = ~/.config/ghostty/shaders/cursor/cursor_blaze_no_trail.glsl
+custom-shader = ~/.config/ghostty/shaders/cursor/party_sparks.glsl
+custom-shader = ~/.config/ghostty/shaders/bettercrt-transparent.glsl
+
+# Slowdown mouse scrolling
+mouse-scroll-multiplier = 0.95
+
+# Fix general slowness on hyprland (https://github.com/ghostty-org/ghostty/discussions/3224)
+async-backend = epoll

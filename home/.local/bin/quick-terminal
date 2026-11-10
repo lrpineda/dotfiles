@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Dropdown terminal toggled by CTRL + grave (see ~/.config/hypr/bindings.lua).
+#
+# This does NOT use ghostty's own quick terminal. Toggling that from outside
+# ghostty requires a `global:` keybind, and global keybinds go through the XDG
+# GlobalShortcuts portal, which xdg-desktop-portal-hyprland refuses for
+# unsandboxed apps:
+#
+#   gtk_ghostty_global_shortcuts: request failed=GDBus.Error:
+#   org.freedesktop.portal.Error.NotAllowed: An app id is required
+#
+# Ghostty also exposes no D-Bus action for it (org.gtk.Actions.List returns
+# only open-config, present-surface, quit, new-window-command, new-window,
+# reload-config), so the compositor has to own the toggle instead. A dedicated
+# ghostty runs on the `quickterm` special workspace and Hyprland shows/hides it.
+
+set -euo pipefail
+
+CLASS="org.quickterm"
+
+if hyprctl clients -j | jq -e --arg c "$CLASS" 'any(.[]; .class == $c)' >/dev/null; then
+  # Hyprland takes lua dispatchers here; the bare `togglespecialworkspace
+  # quickterm` form errors out. Fall back to it anyway in case that changes.
+  hyprctl dispatch 'hl.dsp.workspace.toggle_special("quickterm")' >/dev/null 2>&1 ||
+    hyprctl dispatch togglespecialworkspace quickterm >/dev/null
+else
+  # A separate process is required: with gtk-single-instance the running
+  # ghostty would service the request and --class would be ignored.
+  setsid ghostty --gtk-single-instance=false --class="$CLASS" >/dev/null 2>&1 &
+fi

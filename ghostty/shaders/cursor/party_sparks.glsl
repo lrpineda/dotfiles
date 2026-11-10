@@ -145,7 +145,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     float mask = clamp(c0 * 0.2, 0.0, 1.0) * fade;
 
     // fragColor = mix(fragColor, vec4(rgb, 1.0), mask);
-    vec4 newColor = fragColor + vec4(rgb * mask, 1.0); // additive
+    vec4 newColor = fragColor + vec4(rgb * mask, 0.0); // additive, preserving alpha
     // newColor = mix(newColor, fragColor, step(sdfCurrentCursor, 0.));
     fragColor = min(newColor, 1.0); // clamp
 }
